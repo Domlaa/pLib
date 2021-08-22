@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <path>
+        <external-path name="video" path="PPX/video"/>
+        <external-path name="images" path="PPX/images"/>
+    </path>
+</resources>
