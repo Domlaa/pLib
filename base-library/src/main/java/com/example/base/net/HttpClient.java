@@ -1,4 +1,4 @@
-package com.example.net;
+package com.example.base.net;
 
 import android.annotation.SuppressLint;
 import java.io.BufferedReader;

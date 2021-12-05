@@ -1,4 +1,4 @@
-package com.smart.ppx.download;
+package com.example.base.download;
 
 public interface DownloadListener {
     /**

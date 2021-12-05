@@ -13,9 +13,9 @@ import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.base.download.FileUtil;
 import com.smart.ppx.R;
-import com.smart.ppx.download.DownloadListener;
-import com.smart.ppx.download.FileUtil;
+import com.example.base.download.DownloadListener;
 
 import java.util.ArrayList;
 
