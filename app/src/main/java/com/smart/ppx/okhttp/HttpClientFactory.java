@@ -1,9 +1,7 @@
 package com.smart.ppx.okhttp;
 
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.OkHttpClient;
-
 
 public class HttpClientFactory {
     private static final int CONNECT_TIMEOUT = 10;

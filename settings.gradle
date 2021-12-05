@@ -1,6 +1,4 @@
 include ':app'
-include ':app:baselibrary'
 include ':base-library'
-include ':base-library'
-include ':net-library'
-include ':base-ppx'
+//include ':net-library'
+//include ':base-ppx'

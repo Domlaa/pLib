@@ -11,10 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/app/baselibrary" />
             <option value="$PROJECT_DIR$/base-library" />
-            <option value="$PROJECT_DIR$/base-ppx" />
-            <option value="$PROJECT_DIR$/net-library" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

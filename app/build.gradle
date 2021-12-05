@@ -18,8 +18,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = '1.7'
-        targetCompatibility = '1.7'
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
     }
 }
 
@@ -27,9 +27,11 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     api project(":base-library")
 
+    //api 'com.github.Domlaa.pLib:base-library:dev-SNAPSHOT'
+
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     testImplementation 'junit:junit:4.+'
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    //androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    //androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
