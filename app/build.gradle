@@ -25,9 +25,12 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api project(":base-library")
+    //api project(":base-library")
 
-    //api 'com.github.Domlaa.pLib:base-library:dev-SNAPSHOT'
+    api 'com.github.Domlaa.pLib:base-library:dev-0.0.1'
+    api 'com.squareup.okhttp3:okhttp:4.0.1'
+    api 'com.alibaba:fastjson:1.2.49'
+    api 'com.github.bumptech.glide:glide:4.9.0'
 
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     testImplementation 'junit:junit:4.+'
