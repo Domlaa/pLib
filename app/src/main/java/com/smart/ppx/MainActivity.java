@@ -8,6 +8,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,9 +53,11 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.textView);
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        textView.setOnClickListener(v -> {
-            clipboard.setText(downloadUrl);
-            toast("复制成功");
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                clipboard.setText(downloadUrl);
+                toast("复制成功");
+            }
         });
     }
 
@@ -92,7 +95,12 @@ public class MainActivity extends BaseActivity {
         String pasteString = pasteLegal();
         if (pasteString != null) {
             try {
-                getId(pasteString, this::openPPX);
+                getId(pasteString, new HttpClient.Callback() {
+                    @Override public void complete(String result) {
+                        clipboard.setText(downloadUrl);
+                        toast("复制成功");
+                    }
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -100,7 +108,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private static void getId(String path, HttpClient.Callback callback) {
+    private static void getId(final String path, final HttpClient.Callback callback) {
         new AsyncTask<Void, Void, Exception>() {
             String result;
 
@@ -165,10 +173,14 @@ public class MainActivity extends BaseActivity {
     private final PermissionCallback callback = new PermissionCallback() {
         @Override
         public void hasPermission() {
-            String url = pasteLegal();
+            final String url = pasteLegal();
             if (url != null) {
                 appendText("share url： " + url);
-                getId(url, MainActivity.this::getDownJson);
+                getId(url, new HttpClient.Callback() {
+                    @Override public void complete(String result) {
+                        getDownJson(result);
+                    }
+                });
                 //getPlaySource(url.substring(23, 30));
             }
         }
@@ -253,47 +265,63 @@ public class MainActivity extends BaseActivity {
         FileUtil.download(prefix, url, new DownloadListener() {
             @Override
             public void start(long max) {
-                runOnUiThread(() -> {
-                    pd.show();
-                    toastOnUI("开始下载。。。");
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        pd.show();
+                        toastOnUI("开始下载。。。");
+                    }
                 });
             }
 
             @Override
-            public void loading(int progress) {
-                runOnUiThread(() -> pd.setProgress(progress));
+            public void loading(final int progress) {
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        pd.setProgress(progress);
+                    }
+                });
             }
 
             @Override
-            public void complete(String path) {
-                runOnUiThread(() -> {
-                    pd.dismiss();
-                    toastOnUI(path + "已下载到PPX目录下");
+            public void complete(final String path) {
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        pd.dismiss();
+                        toastOnUI(path + "已下载到PPX目录下");
+                    }
                 });
                 updateAlbum(path);
             }
 
             @Override
-            public void fail(int code, String message) {
-                runOnUiThread(() -> {
-                    pd.dismiss();
-                    toastOnUI("下载失败" + message);
+            public void fail(int code, final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        pd.dismiss();
+                        toastOnUI("下载失败" + message);
+                    }
                 });
             }
 
             @Override
-            public void loadFail(String message) {
-                runOnUiThread(() -> {
-                    pd.dismiss();
-                    toastOnUI("下载失败" + message);
+            public void loadFail(final String message) {
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        pd.dismiss();
+                        toastOnUI("下载失败" + message);
+                    }
                 });
             }
         });
     }
 
     private void updateAlbum(String fileName) {
-        MediaScannerConnection.scanFile(this, new String[]{fileName},
-                new String[]{"video/mp4"}, (path1, uri) -> System.out.println(path1));
+        MediaScannerConnection.scanFile(this, new String[] { fileName },
+                new String[] { "video/mp4" }, new MediaScannerConnection.OnScanCompletedListener() {
+                    @Override public void onScanCompleted(String path, Uri uri) {
+
+                    }
+                });
     }
 
 
@@ -301,16 +329,18 @@ public class MainActivity extends BaseActivity {
         String pasteString = pasteLegal();
         if (pasteString != null) {
             String url = PLAY + pasteString.substring(23, 30);
-            shorter(url, url1 -> {
-                clipboard.setText(url1);
-                toast(url1);
+            shorter(url, new HttpClient.Callback() {
+                @Override public void complete(String url1) {
+                    clipboard.setText(url1);
+                    toast(url1);
+                }
             });
         }
     }
 
 
     @SuppressLint("StaticFieldLeak")
-    public static void shorter(String url, HttpClient.Callback callback) {
+    public static void shorter(final String url, final HttpClient.Callback callback) {
         new AsyncTask<Void, Void, Exception>() {
             String result;
 

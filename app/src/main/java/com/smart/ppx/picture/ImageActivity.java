@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,15 +71,21 @@ public class ImageActivity extends Activity {
             }
         });
 
-        imageView.setOnClickListener(v -> {
-            int position = viewPager.getCurrentItem();
-            download(name + position, images.get(position));
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+                int position = viewPager.getCurrentItem();
+                download(name + position, images.get(position));
+            }
         });
     }
 
     private void updateAlbum(String fileName) {
         MediaScannerConnection.scanFile(this, new String[]{fileName},
-                new String[]{"image/jpeg"}, (path1, uri) -> System.out.println(path1));
+                new String[]{"image/jpeg"}, new MediaScannerConnection.OnScanCompletedListener() {
+                    @Override public void onScanCompleted(String path, Uri uri) {
+
+                    }
+                });
     }
 
     private void download(String name, String url) {
@@ -92,8 +100,10 @@ public class ImageActivity extends Activity {
 
             @Override
             public void complete(String path) {
-                runOnUiThread(() -> {
-                    toast("已保存到" + FileUtil.IMAGE + "目录");
+                runOnUiThread(new Runnable() {
+                    @Override public void run() {
+                        toast("已保存到" + FileUtil.IMAGE + "目录");
+                    }
                 });
                 updateAlbum(path);
             }
