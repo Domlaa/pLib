@@ -3,6 +3,7 @@ package com.smart.ppx;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,7 @@ import static com.smart.ppx.Config.TAG;
 public class MainActivity extends BaseActivity {
 
     private String prefix;
+    private String downloadUrl;
     ClipboardManager clipboard;
     private TextView textView;
     private final StringBuilder builder = new StringBuilder();
@@ -50,6 +52,10 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.textView);
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        textView.setOnClickListener(v -> {
+            clipboard.setText(downloadUrl);
+            toast("复制成功");
+        });
     }
 
     private boolean linkLegal(String url) {
@@ -188,6 +194,7 @@ public class MainActivity extends BaseActivity {
                     public void onSuccessful(Result data) {
                         String path = getPlayUrl(data.getData());
                         appendText("download url： " + path);
+                        downloadUrl = path;
                         Log.i(TAG, "--->>> path " + path);
                         downVideo(prefix, path);
                     }
