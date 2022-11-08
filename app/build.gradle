@@ -1,12 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "29.0.3"
+    compileSdkVersion 32
+    buildToolsVersion "30.0.3"
     defaultConfig {
         applicationId "com.smart.ppx"
         minSdkVersion 15
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -28,7 +31,10 @@ dependencies {
     //api project(":base-library")
 
     api 'com.github.Domlaa.pLib:base-library:dev-0.0.1'
-    api 'com.squareup.okhttp3:okhttp:4.0.1'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    api 'com.squareup.okhttp3:okhttp:4.10.0'
     api 'com.alibaba:fastjson:1.2.49'
     api 'com.github.bumptech.glide:glide:4.9.0'
 

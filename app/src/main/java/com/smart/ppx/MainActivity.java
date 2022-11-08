@@ -9,7 +9,12 @@ import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -20,12 +25,16 @@ import com.example.base.net.HttpClient;
 import com.example.base.net.IClient;
 import com.smart.ppx.bean.Result;
 import com.example.base.download.DownloadListener;
+import com.smart.ppx.helper.UtilKt;
 import com.smart.ppx.okhttp.HttpManager;
 import com.smart.ppx.okhttp.IResponseListener;
+import com.smart.ppx.helper.Utils;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Random;
 import java.util.UUID;
 import org.json.JSONObject;
 
@@ -36,6 +45,10 @@ import static com.smart.ppx.Config.PREFIX;
 import static com.smart.ppx.Config.SHORT;
 import static com.smart.ppx.Config.TAG;
 
+import androidx.annotation.Nullable;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
 
 public class MainActivity extends BaseActivity {
 
@@ -45,6 +58,8 @@ public class MainActivity extends BaseActivity {
     private TextView textView;
     private final StringBuilder builder = new StringBuilder();
 
+    private static final int REQUEST_CODE = 1000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +67,11 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         textView = findViewById(R.id.textView);
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-                clipboard.setText(downloadUrl);
-                toast("复制成功");
-            }
+        textView.setOnClickListener(v -> {
+            clipboard.setText(downloadUrl);
+            toast("复制成功");
         });
+
     }
 
     private boolean linkLegal(String url) {
@@ -94,11 +108,9 @@ public class MainActivity extends BaseActivity {
         String pasteString = pasteLegal();
         if (pasteString != null) {
             try {
-                getId(pasteString, new HttpClient.Callback() {
-                    @Override public void complete(String result) {
-                        clipboard.setText(downloadUrl);
-                        toast("复制成功");
-                    }
+                getId(pasteString, result -> {
+                    clipboard.setText(downloadUrl);
+                    toast("复制成功");
                 });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -147,7 +159,16 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+        if (VERSION.SDK_INT >= VERSION_CODES.R) {
+            // 先判断有没有权限
+            if (Environment.isExternalStorageManager()) {
+                callback.hasPermission();
+            } else {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + context.getPackageName()));
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        } else if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.READ_EXTERNAL_STORAGE};
             requestPermissions("请授予以下权限", permissions, callback);
@@ -175,11 +196,7 @@ public class MainActivity extends BaseActivity {
             final String url = pasteLegal();
             if (url != null) {
                 appendText("share url： " + url);
-                getId(url, new HttpClient.Callback() {
-                    @Override public void complete(String result) {
-                        getDownJson(result);
-                    }
-                });
+                getId(url, result -> getDownJson(result));
                 //getPlaySource(url.substring(23, 30));
             }
         }
@@ -367,14 +384,28 @@ public class MainActivity extends BaseActivity {
     }
 
     public void pic(View view) {
-        String pasteString = pasteLegal();
-        if (pasteString != null) {
-            try {
-                image(pasteString.substring(23, 30));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        toastNum();
+
+//        String pasteString = pasteLegal();
+//        if (pasteString != null) {
+//            try {
+//                image(pasteString.substring(23, 30));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+    }
+
+    public void toastNum() {
+
+        int num = Utils.getNum(10);
+        toast("num is " + num);
+
+
+        //UtilKt.INSTANCE.loadClass(this);
+//
+//        String path = UtilKt.INSTANCE.getApplicationApkPath(this);
+//        Log.i(TAG, "--->>> toastNum: path = " + path);
     }
 
     private void image(String postfix) {
@@ -430,6 +461,18 @@ public class MainActivity extends BaseActivity {
             downVideo(UUID.randomUUID().toString(), pasteString);
         } else {
             toast("请在粘贴板复制正确链接,当前粘贴板内容：" + pasteString + ",长度：" + pasteString.length());
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                callback.hasPermission();
+            } else {
+                callback.noPermission();
+            }
         }
     }
 
