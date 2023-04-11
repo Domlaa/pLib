@@ -24,29 +24,29 @@ android {
         targetCompatibility = '1.8'
     }
 
-    flavorDimensions('local', 'outside')
+    //flavorDimensions('local', 'outside')
     //flavorDimensions('local')
 
-    productFlavors {
-        xiaomi {
-            dimension 'local'
-        }
+//    productFlavors {
+//        xiaomi {
+//            dimension 'local'
+//        }
+//
+//        samsung {
+//            dimension 'outside'
+//        }
+
 
 //        huawei {
 //            dimension 'local'
 //        }
 
 
-        samsung {
-            dimension 'outside'
-        }
-
 //        google {
 //            dimension 'outside'
 //        }
+    //}
 
-
-    }
 }
 
 dependencies {
