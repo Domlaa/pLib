@@ -9,12 +9,12 @@ plugins {
 group='com.github.Domlaa'
 
 android {
-  compileSdkVersion 33
+  compileSdkVersion COMPILE_SDK_VERSION.toInteger()
   //buildToolsVersion "30.0.3"
 
   defaultConfig {
-    minSdkVersion 23
-    targetSdkVersion 33
+    minSdkVersion MIN_SDK_VERSION.toInteger()
+    targetSdkVersion TARGET_SDK_VERSION.toInteger()
     versionCode 1
     versionName "1.0"
 

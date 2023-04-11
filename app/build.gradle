@@ -1,24 +1,50 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply from: 'pack.gradle'
 
 android {
-    compileSdkVersion 33
+
+    compileSdkVersion COMPILE_SDK_VERSION.toInteger()
     //buildToolsVersion "30.0.3"
     defaultConfig {
         applicationId "com.smart.ppx"
-        minSdkVersion 23
-        targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion MIN_SDK_VERSION.toInteger()
+        targetSdkVersion TARGET_SDK_VERSION.toInteger()
+        versionCode VERSION_CODE.toInteger()
+        versionName VERSION_NAME.toString()
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        signingConfig signingConfigs.debug
     }
+
+    signingConfigs {
+        release {
+            keyAlias 'ppx'
+            keyPassword '123456'
+            storeFile file('ppx.jks')
+            storePassword '123456'
+        }
+        debug {
+            storeFile file('ppx.jks')
+            storePassword "123456"
+            keyAlias "ppx"
+            keyPassword "123456"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
         }
     }
+
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'

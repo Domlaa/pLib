@@ -24,9 +24,18 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew assembleRelease
+
+#    - uses: r0adkll/sign-android-release@v1
+#      id: sign_app
+#      with:
+#        releaseDirectory: app/build/outputs/apk/release
+#        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+#        alias: ${{ secrets.ALIAS }}
+#        keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+#        keyPassword: ${{ secrets.KEY_PASSWORD }}
       
     - name: Upload Apk
       uses: actions/upload-artifact@v3.1.2
       with: 
-        name: app-release.apk
-        path: app/build/outputs/apk/release/app-release-unsigned.apk
+        name: release
+        path: app/build/outputs/apk/release/app-release.apk

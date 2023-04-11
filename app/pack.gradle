@@ -1,0 +1,14 @@
+
+
+task buildAndSign {
+    println "buildAndSign"
+
+    doFirst {
+        println "before buildAndSign"
+    }
+
+    doLast {
+        println "after buildAndSign"
+    }
+
+}
