@@ -2,9 +2,11 @@ name: Android CI
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    #branches: [ "master" ]
+    tags:
+      - '*'
+#  pull_request:
+#    branches: [ "master" ]
 
 jobs:
   build:
@@ -40,7 +42,7 @@ jobs:
         name: release
         path: app/build/outputs/apk/release/app-release.apk
         
-    - run: mv app/build/outputs/apk/release/app-release.apk ppx_release.apk
+    - run: mv app/build/outputs/apk/release/app-release.apk ppx_$GITHUB_REF_NAME.apk
     - uses: ncipollo/release-action@v1
       with:
         artifacts: "*.apk"
