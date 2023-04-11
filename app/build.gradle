@@ -1,15 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
+    compileSdkVersion 33
+    //buildToolsVersion "30.0.3"
     defaultConfig {
         applicationId "com.smart.ppx"
-        minSdkVersion 15
-        targetSdkVersion 32
+        minSdkVersion 23
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -24,15 +23,38 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+
+    flavorDimensions('local', 'outside')
+    //flavorDimensions('local')
+
+    productFlavors {
+        xiaomi {
+            dimension 'local'
+        }
+
+//        huawei {
+//            dimension 'local'
+//        }
+
+
+        samsung {
+            dimension 'outside'
+        }
+
+//        google {
+//            dimension 'outside'
+//        }
+
+
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    //api project(":base-library")
+    api project(":base-library")
+    //api 'com.github.Domlaa.pLib:base-library:dev-0.0.1'
 
-    api 'com.github.Domlaa.pLib:base-library:dev-0.0.1'
-
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     api 'com.squareup.okhttp3:okhttp:4.10.0'
     api 'com.alibaba:fastjson:1.2.49'

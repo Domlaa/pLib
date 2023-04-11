@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.Target;
@@ -200,7 +201,7 @@ public class FileUtil {
 
 
     private static File getImage(String name) {
-        String root = Environment.getExternalStorageDirectory().getPath() + IMAGE;
+        String root = getExternalStoragePath() + IMAGE;
         File folder = new File(root);
         if (!folder.exists()) {
             folder.mkdirs();
@@ -210,26 +211,38 @@ public class FileUtil {
     }
 
     private static File getVideo(String name) {
-        String root = Environment.getExternalStorageDirectory().getPath() + VIDEO;
+        String root = getExternalStoragePath() + VIDEO;
         File folder = new File(root);
         if (!folder.exists()) {
-            folder.mkdirs();
+            boolean result = folder.mkdirs();
+            Log.d(TAG, "getVideo: folder = " + root + ", result = " + result);
         }
         String fileName = name + ".mp4";
         return new File(root, fileName);
     }
 
     public static boolean videoExist(String name) {
-        String root = Environment.getExternalStorageDirectory().getPath() + VIDEO;
+        String root = getExternalStoragePath() + VIDEO;
         String fileName = name + ".mp4";
         File file = new File(root, fileName);
         return file.exists();
     }
 
-    public static String getPath(String prefix) {
-        String root = Environment.getExternalStorageDirectory().getPath() + VIDEO;
-        String fileName = prefix + ".mp4";
-        return root + fileName;
+//    public static String getPath(String prefix) {
+//        String root = getExternalStoragePath() + VIDEO;
+//        String fileName = prefix + ".mp4";
+//        return root + fileName;
+//    }
+
+    private static String getExternalStoragePath() {
+        File rootDir;
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {//有SD卡
+            rootDir = Environment.getExternalStorageDirectory();
+        } else {
+            rootDir = Environment.getDataDirectory();
+        }
+        Log.d(TAG, "getExternalStoragePath: root = " + rootDir + ", state: " + Environment.getExternalStorageState());
+        return rootDir.getPath();
     }
 
     // 保存图片到手机

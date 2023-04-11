@@ -9,11 +9,17 @@ import android.content.Intent;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.example.base.BaseActivity;
 import com.example.base.download.FileUtil;
 import com.example.base.net.HttpClient;
@@ -65,7 +71,12 @@ public class MainActivity extends BaseActivity {
     }
 
     private String pasteLegal() {
-        String pasteString = clipboard.getText().toString();
+        CharSequence charset = clipboard.getText();
+        if (charset == null) {
+            toast("剪切板很干净，没有任何东西");
+            return null;
+        }
+        String pasteString = charset.toString();
         if (linkLegal(pasteString)) {
             return pasteString;
         } else {
@@ -147,11 +158,7 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE};
-            requestPermissions("请授予以下权限", permissions, callback);
-        }
+        requestPermission();
     }
 
 
@@ -431,6 +438,24 @@ public class MainActivity extends BaseActivity {
         } else {
             toast("请在粘贴板复制正确链接,当前粘贴板内容：" + pasteString + ",长度：" + pasteString.length());
         }
+    }
+
+
+    private void requestPermission() {
+        if (VERSION.SDK_INT >= VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                callback.hasPermission();
+                return;
+            }
+            toast("请赋予文件夹权限");
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            intent.setData(Uri.parse("package:" + this.getPackageName()));
+            startActivityForResult(intent, 0);
+            return;
+        }
+        String[] permissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE};
+        requestPermissions("请授予以下权限", permissions, callback);
     }
 
 

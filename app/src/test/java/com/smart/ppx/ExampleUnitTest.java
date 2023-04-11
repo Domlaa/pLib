@@ -1,8 +1,5 @@
 package com.smart.ppx;
 
-import com.smart.ppx.net.HttpClient;
-import com.smart.ppx.net.IClient;
-
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
@@ -47,19 +44,6 @@ public class ExampleUnitTest {
 
       //  System.out.println(request(SHORT, b, KEY));
 
-    }
-
-    public static String request(String host, String url, String key) {
-        try {
-            String formatUrl = URLEncoder.encode(url, "UTF-8");
-            IClient client = new HttpClient(host);
-            client.addParam("url",formatUrl);
-            client.addParam("key",key);
-            return client.get();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 
