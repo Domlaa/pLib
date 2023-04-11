@@ -39,3 +39,10 @@ jobs:
       with: 
         name: release
         path: app/build/outputs/apk/release/app-release.apk
+        
+    - run: mv app/build/outputs/apk/release/app-release.apk ppx_release.apk
+    - uses: ncipollo/release-action@v1
+      with:
+        artifacts: "*.apk"
+        token: ${{ github.token }}
+        generateReleaseNotes: true
