@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private boolean linkLegal(String url) {
-        return url.contains(PREFIX) && url.length() == 31;
+        return url.contains(PREFIX) && url.length() > 30;
     }
 
     private String pasteLegal() {
@@ -77,10 +77,11 @@ public class MainActivity extends BaseActivity {
             return null;
         }
         String pasteString = charset.toString();
+        Log.d(TAG, "pasteLegal: " + pasteString);
         if (linkLegal(pasteString)) {
             return pasteString;
         } else {
-            toast("请在粘贴板复制正确链接,当前粘贴板内容：" + pasteString + ",长度：" + pasteString.length());
+            toast("链接错误：" + pasteString + ",长度：" + pasteString.length());
         }
         return null;
     }
